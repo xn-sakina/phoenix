@@ -13,6 +13,7 @@ import { addHook } from 'pirates'
 import type { Loader } from 'esbuild'
 import { extname } from 'path'
 import * as esbuild from 'esbuild'
+import type { TransformOptions } from 'esbuild'
 
 export class EsbuildPhoenix {
   private files: IPhoenixFile[] = []
@@ -22,12 +23,16 @@ export class EsbuildPhoenix {
   private format: PhoenixFormat
   private onlyTransformTs: boolean
   private implementor: EsbuildInstance
+  private esbuildOpts: TransformOptions
 
   constructor(opts: IEsbuildPhoenixOpts = {}) {
+    const { format, onlyTransformTs, implementor, ...esbuildOpts } = opts
+
     // opts
-    this.format = opts?.format ?? 'cjs'
-    this.onlyTransformTs = opts?.onlyTransformTs ?? false
-    this.implementor = opts?.implementor ?? esbuild
+    this.format = format ?? 'cjs'
+    this.onlyTransformTs = onlyTransformTs ?? false
+    this.implementor = implementor ?? esbuild
+    this.esbuildOpts = esbuildOpts || {}
 
     // init
     this.files = []
@@ -49,12 +54,14 @@ export class EsbuildPhoenix {
     filename,
     implementor = esbuild,
     format = 'cjs',
+    esbuildOpts,
   }: IPhoenixTransformOptions) {
     const ext = extname(filename).slice(1)
     const content = implementor.transformSync(code, {
       loader: ext as Loader,
       target: 'es2016',
       format,
+      ...esbuildOpts,
     }).code
     return content
   }
@@ -73,6 +80,7 @@ export class EsbuildPhoenix {
       filename,
       implementor: this.implementor,
       format: this.format,
+      esbuildOpts: this.esbuildOpts,
     })
   }
 

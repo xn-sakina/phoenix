@@ -1,3 +1,5 @@
+import type { TransformOptions as EsbuildOptions } from 'esbuild'
+
 export interface IPhoenixFile {
   filename: string
   compiled: boolean
@@ -17,11 +19,15 @@ export interface IPhoenixTransformOptions extends IPhoenixCompileOptions {
    * @default cjs
    */
   format?: PhoenixFormat
+  /**
+   * @default {}
+   */
+  esbuildOpts?: EsbuildOptions
 }
 
 export type EsbuildInstance = typeof import('esbuild')
 export type PhoenixFormat = 'cjs' | 'esm'
-export interface IEsbuildPhoenixOpts {
+export interface IEsbuildPhoenixOpts extends EsbuildOptions {
   /**
    * default will transform all format file
    * @default false

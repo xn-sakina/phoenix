@@ -11,7 +11,7 @@ import {
 } from './interface'
 import { addHook } from 'pirates'
 import type { Loader } from 'esbuild'
-import { extname } from 'path'
+import { basename, extname } from 'path'
 import * as esbuild from 'esbuild'
 import type { TransformOptions } from 'esbuild'
 
@@ -61,6 +61,7 @@ export class EsbuildPhoenix {
       loader: ext as Loader,
       target: 'es2016',
       format,
+      sourcefile: filename,
       ...esbuildOpts,
     }).code
     return content
